@@ -1,0 +1,117 @@
+---
+import "../styles/global.css";
+export interface Props {
+  title: string;
+  description: string;
+  url: string;
+  image: string;
+  keywords?: string[];
+}
+
+const { title, description, url, image } = Astro.props;
+const { DOMAIN } = import.meta.env;
+const canonicalUrl = new URL(url, DOMAIN).toString();
+const phone = "+254797693493";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/ico" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://db.onlinewebfonts.com/c/8ac00c2e496b57522cb59ba18494000d?family=Prumo+Text+W00+Bold"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+    <!-- seo -->
+    <meta name="description" content={description} />
+    <meta name="keywords" content={Astro.props.keywords?.join(", ")} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" href={canonicalUrl} hreflang="en" />
+    <link rel="alternate" href={canonicalUrl} hreflang="x-default" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- end seo -->
+  </head>
+  <body class="text-dark-01">
+    <slot />
+
+    <div class="">
+      <a
+        href=`https://wa.me/${phone}`
+        class="whatsapp-float w-max bg-[#25d366] h-full
+        rounded-full flex items-center justify-center shadow-lg
+        transition-all duration-300
+        hover:scale-110 active:scale-100"
+        target="_blank"
+        title="Chat with us on WhatsApp"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="https://img.icons8.com/color/48/000000/whatsapp--v1.png"
+          alt="WhatsApp"
+        />
+        <span class="sr-only">Chat with us on WhatsApp</span>
+      </a>
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  .whatsapp-float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    cursor: pointer;
+  }
+  :root {
+    --accent: 124, 58, 237;
+    --accent-gradient: linear-gradient(
+      45deg,
+      rgb(var(--accent)),
+      #da62c4 30%,
+      white 60%
+    );
+  }
+  * {
+    font-family:
+      "Source Sans 3",
+      sans-serif,
+      Menlo,
+      Monaco,
+      Lucida Console,
+      Liberation Mono,
+      DejaVu Sans Mono,
+      Bitstream Vera Sans Mono,
+      Courier New,
+      monospace;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Prumo Text W00 Bold";
+  }
+</style>

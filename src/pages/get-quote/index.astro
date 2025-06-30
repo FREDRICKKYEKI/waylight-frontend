@@ -1,0 +1,45 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Footer from "../components/Footer.astro";
+import { Header9 } from "./components/Header9";
+import { Cta2 } from "./components/Cta2";
+import NavBar from "../components/NavBar.astro";
+import { fetchSanityData, urlFor } from "../../lib/sanity";
+
+const pageData = await fetchSanityData(
+  `*[_type == "page" && title == "Get Quote"][0] `
+);
+const { title, description, keywords } = pageData.seo;
+---
+
+<Layout
+  title={title}
+  description={description}
+  keywords={keywords}
+  image={urlFor(pageData.seo.image).width(1200).height(630).url()}
+  url={`/${pageData.seo.slug.current}`}
+>
+  <NavBar />
+  {
+    pageData.PageType[0].getQuoteSections.map((section: any) => {
+      switch (section._type) {
+        case "headerSection":
+          const headerProps = {
+            ...section,
+            image: urlFor(section.image).url(),
+          };
+          return <Header9 {...headerProps} client:load />;
+        default:
+          return null;
+      }
+    })
+  }
+  <!-- <Header9 /> -->
+  <Cta2 client:load />
+  <!-- <Testimonial6 /> -->
+  <!-- <Logo2 /> -->
+  <!-- <Layout3 /> -->
+  <!-- <Cta3 /> -->
+  <!-- <Contact14 /> -->
+  <Footer />
+</Layout>

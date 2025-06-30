@@ -1,0 +1,35 @@
+---
+import { fetchSanityData } from "../../lib/sanity";
+import { Navbar } from "./N_avbar";
+
+const currentPath = Astro.url.pathname;
+const headerData = await fetchSanityData(`
+*[_type == "headerSection" && title == "Default Header"][0]
+{
+  ...,
+  menu->{
+    items[] {
+      _key,
+      _type,
+      label,
+      href,
+      openInNewTab
+    }
+  },
+  socials->{
+    _id,
+    _type,
+    title,
+    items[] {
+      _key,
+      _type,
+      platform,
+      url,
+      icon
+    }
+  }
+}
+`);
+---
+
+<Navbar {...headerData} currentPath={currentPath} client:only />

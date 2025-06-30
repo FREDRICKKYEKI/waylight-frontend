@@ -1,0 +1,74 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { fetchSanityData, urlFor } from "../../lib/sanity";
+import Footer from "../components/Footer.astro";
+import NavBar from "../components/NavBar.astro";
+import { Testimonial1 } from "../home/components/Testimonial1";
+import { Cta27 } from "./components/Cta27";
+import { Header44 } from "./components/Header44";
+import { Layout1 } from "./components/Layout1";
+import { Layout84 } from "./components/Layout84";
+import { Logo3 } from "./components/Logo3";
+import { Logo3_1 } from "./components/Logo3_1";
+import { Team3 } from "./components/Team3";
+import { Testimonial5 } from "./components/Testimonial5";
+
+const aboutPageData = await fetchSanityData(
+  `*[_type == "page" && title == "About"][0] {
+  ...,
+  "PageType": PageType[]{
+    ...,
+    aboutUsSections[]{
+      ...,
+      _type == "testimonialSection" => {
+        ...,
+        testimonials[]->{
+          _id,
+          name,
+          image,
+          text,
+          company
+        }
+      }
+    }
+  }
+}`
+);
+---
+
+<Layout
+  title="WayLight Car Shades | About Us"
+  description={aboutPageData.seo.description}
+  image={urlFor(aboutPageData.seo.image).width(1200).height(630).url()}
+  url={aboutPageData.seo.slug.current}
+>
+  <NavBar />
+  {
+    aboutPageData.PageType[0].aboutUsSections.map((section: any) => {
+      switch (section._type) {
+        case "headerSection":
+          const headerProps = {
+            ...section,
+            image: urlFor(section.image).url(),
+          };
+          return <Header44 {...headerProps} client:load />;
+        case "aboutUsSection":
+          const aboutProps = {
+            ...section,
+            image: urlFor(section.image).url(),
+          };
+          return <Layout1 {...aboutProps} client:load />;
+        case "testimonialSection":
+          const props = {
+            ...section,
+            testimonials: section.testimonials.map((testimonial: any) => ({
+              ...testimonial,
+              image: urlFor(testimonial.image).url(),
+            })),
+          };
+          return <Testimonial1 {...props} client:load />;
+      }
+    })
+  }
+  <Footer />
+</Layout>

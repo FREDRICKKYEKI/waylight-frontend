@@ -1,0 +1,58 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Footer from "../components/Footer.astro";
+import { Header50 } from "./components/Header50";
+import { Layout242 } from "./components/Layout242";
+import { Layout197 } from "./components/Layout197";
+import { Layout10 } from "./components/Layout10";
+import { Layout3 } from "./components/Layout3";
+import { Cta3 } from "./components/Cta3";
+import NavBar from "../components/NavBar.astro";
+import { fetchSanityData, urlFor } from "../../lib/sanity";
+
+const servicesData = await fetchSanityData(
+  `*[_type == "page" && title == "Services"][0]`
+);
+---
+
+<Layout
+  title="WayLight Car Shades | Services"
+  description={servicesData.seo.description}
+  image={urlFor(servicesData.seo.image).width(1200).height(630).url()}
+  url={servicesData.seo.slug.current}
+  keywords={servicesData.seo?.keywords}
+>
+  <NavBar />
+  {
+    servicesData.PageType[0].servicesSections.map((section: any) => {
+      switch (section._type) {
+        case "headerSection":
+          return <Header50 {...section} client:only />;
+        case "ServiceSection":
+          switch (section.sectionId) {
+            case "expert-service-section":
+              const expertProps = {
+                ...section,
+                image: urlFor(section.image).url(),
+              };
+              return <Layout197 client:load {...expertProps} />;
+            case "durability-service-section":
+              const durabilityProps = {
+                ...section,
+                image: urlFor(section.image).url(),
+              };
+              return <Layout10 client:only {...durabilityProps} />;
+            case "custom-service-section":
+              const customProps = {
+                ...section,
+                image: urlFor(section.image).url(),
+              };
+              return <Layout3 client:only {...customProps} />;
+          }
+        case "getQuoteSection":
+          return <Cta3 {...section} client:only />;
+      }
+    })
+  }
+  <Footer />
+</Layout>

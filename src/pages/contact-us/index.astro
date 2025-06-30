@@ -1,0 +1,32 @@
+---
+import { Header46 } from "./components/Header46";
+import NavBar from "../components/NavBar.astro";
+import Footer from "../components/Footer.astro";
+import Layout from "../../layouts/Layout.astro";
+import { Contact14 } from "../blogs/components/Contact14";
+import { fetchSanityData } from "../../lib/sanity";
+// get string param (success) from URL
+
+const success = Astro.url.searchParams.get("success");
+const contactData = await fetchSanityData(
+  `*[_type == "contactInfo" && owner == "WayLight Carshades Contacts"][0]`
+);
+---
+
+<Layout
+  title="WayLight Car Shades | Contact Us"
+  description="Get in touch with WayLight Car Shades for inquiries, support, or feedback. We're here to help you with all your car shade needs."
+  image=""
+  url="/contact-us"
+>
+  <NavBar />
+  <Header46 client:load success={success} />
+  <!-- <Contact1 />
+  <Contact13 />
+  <Team6 /> -->
+  <!-- <Contact5 /> -->
+  <!-- <Cta25 /> -->
+  <!-- <Cta4 /> -->
+  <Contact14 client:load {...contactData} />
+  <Footer />
+</Layout>

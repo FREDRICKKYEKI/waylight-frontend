@@ -1,0 +1,82 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import NavBar from "../components/NavBar.astro";
+import { Blog1 } from "./components/Blog1";
+import { Blog46 } from "./components/Blog46";
+import { Cta2 } from "./components/Cta2";
+import { Testimonial15 } from "./components/Testimonial15";
+import { Cta3 } from "./components/Cta3";
+import { Contact14 } from "./components/Contact14";
+import Footer from "../components/Footer.astro";
+import { fetchSanityData, urlFor } from "../../lib/sanity";
+
+const pageData = await fetchSanityData(
+  `*[_type == "page" && title == "Blogs"][0]{
+  ...,
+  "PageType": PageType[]{
+    ...,
+    blogsSections[]{
+      ...,
+      _type == "headerSection" => {
+        ...,
+        blogs[]->{
+          _id,
+          title,
+          mainImage,
+          description,
+          publishedAt,
+          slug,
+          author->{
+            name,
+            profileImage
+          },
+        }
+      }
+    }
+  }
+}
+
+`
+);
+const contactInfo = await fetchSanityData(
+  `*[_type == "contactInfo" && owner == "WayLight Carshades Contacts"][0]`
+);
+const { title, description, image, keywords, slug } = pageData.seo;
+---
+
+<Layout
+  title={title}
+  description={description}
+  keywords={keywords}
+  image={urlFor(image).width(1200).height(630).url()}
+  url={`/${slug.current}`}
+  }
+  keywords={keywords}
+>
+  <NavBar />
+  {
+    pageData.PageType[0].blogsSections.map((section: any) => {
+      switch (section._type) {
+        case "headerSection":
+          const headerProps = {
+            ...section,
+            blogs: section.blogs.map((blog: any) => ({
+              ...blog,
+              mainImage: urlFor(blog.mainImage).url(),
+              author: blog.author
+                ? {
+                    ...blog.author,
+                    profileImage: urlFor(blog.author.profileImage).url(),
+                  }
+                : null,
+            })),
+          };
+          return <Blog1 {...headerProps} client:load />;
+        default:
+          return null;
+      }
+    })
+  }
+  <Contact14 client:load {...contactInfo} />
+  <Footer />
+</Layout>

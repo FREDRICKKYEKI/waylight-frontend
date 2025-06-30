@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+.__accordion-item {
+  @apply cursor-pointer rounded-2xl border-b border-neutral-200 p-2;
+}
+
+div.__accordion button {
+  @apply w-full !justify-between;
+}
+
+.pricing-table th {
+  @apply bg-primary-01;
+}
+
+#section__miniabout li {
+  @apply list-disc list-inside;
+}
+
+@theme {
+  /* // primary colors */
+  --color-primary-01: #4eca7b;
+  --color-primary-02: #83d9a2;
+  --color-primary-03: #dbf4e4;
+  --color-primary-04: #edf9f1;
+  /* // secondary colors */
+  --color-secondary-01: #d63024;
+  --color-secondary-02: #e26e65;
+  --color-secondary-03: #f6d5d3;
+  --color-secondary-04: #faeae9;
+  /* // neutral colors */
+  --color-dark-01: #04180b;
+  --color-dark-02: #434a45;
+  --color-dark-03: #929493;
+  --color-dark-04: #c4ccc7;
+}

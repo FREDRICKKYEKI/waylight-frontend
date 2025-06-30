@@ -1,0 +1,53 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Footer from "../components/Footer.astro";
+import { Header44 } from "./components/Header44";
+import { Portfolio13 } from "./components/Portfolio13";
+import { Gallery19 } from "./components/Gallery19";
+import { Layout1 } from "./components/Layout1";
+import { Contact15 } from "./components/Contact15";
+import { Cta3 } from "./components/Cta3";
+import NavBar from "../components/NavBar.astro";
+import { fetchSanityData, urlFor } from "../../lib/sanity";
+
+const pageData = await fetchSanityData(`
+*[_type == "page" && title == "Project Gallery"][0]
+`);
+const { title, description, image, slug, keywords } = pageData.seo;
+---
+
+<Layout
+  title={title}
+  description={description}
+  image={urlFor(image).width(1200).height(630).url()}
+  url={`/${slug.current}`}
+  keywords={keywords}
+>
+  <NavBar />
+  {
+    pageData.PageType[0].projectGallerySections.map((section: any) => {
+      switch (section._type) {
+        case "headerSection":
+          const headerProps = {
+            ...section,
+            image: urlFor(section.image).url(),
+          };
+          return <Header44 {...headerProps} client:load />;
+        case "projectsSections":
+          const projectsProps = {
+            ...section,
+            projects: section.projects.map((project: any) => ({
+              ...project,
+              image: urlFor(project.image).url(),
+            })),
+          };
+          return <Portfolio13 {...projectsProps} client:load />;
+        case "lastSection":
+          return <Cta3 {...section} client:load />;
+        default:
+          return null;
+      }
+    })
+  }
+  <Footer />
+</Layout>

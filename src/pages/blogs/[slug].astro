@@ -1,0 +1,86 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Footer from "../components/Footer.astro";
+import { BlogPostHeader5 } from "./components_blog/BlogPostHeader5";
+import { Content30 } from "./components_blog/Content30";
+import { Faq6 } from "./components_blog/Faq6";
+import { Blog39 } from "./components_blog/Blog39";
+import NavBar from "../components/NavBar.astro";
+import { fetchSanityData, urlFor } from "../../lib/sanity";
+
+const { slug } = Astro.params;
+
+let pageData = await fetchSanityData(
+  `*[_type == "blog" && slug.current == "${slug}"][0] {
+  ...,
+  author-> {
+    name,
+    profileImage
+  },
+  relatedPosts[]->{
+    ...,
+    author-> {
+    name,
+    profileImage
+  },}
+
+}`
+);
+
+const seo = {
+  title: `WayLight Blog | ${pageData?.title}`,
+  description: pageData?.description,
+  slug: pageData?.slug,
+  image: pageData
+    ? urlFor(pageData?.mainImage).width(1200).height(630).url()
+    : "",
+};
+
+pageData = {
+  ...pageData,
+  author: pageData?.author
+    ? {
+        ...pageData.author,
+        profileImage: urlFor(pageData.author.profileImage).url(),
+      }
+    : null,
+  mainImage: urlFor(pageData?.mainImage).url(),
+  relatedPosts: pageData?.relatedPosts.map((post: any) => ({
+    ...post,
+    mainImage: urlFor(post.mainImage).url(),
+    author: post.author
+      ? {
+          ...post.author,
+          profileImage: urlFor(post.author.profileImage).url(),
+        }
+      : null,
+  })),
+};
+---
+
+{
+  !pageData ? (
+    <div class="flex items-center justify-center h-screen">
+      <p class="text-2xl text-gray-500">Blog Not Found or does not exist!</p>
+      <a href="/blogs" class="text-blue-500 hover:underline ml-4">
+        &lAarr; Go back to blogs
+      </a>
+    </div>
+  ) : (
+    <Layout
+      title={seo.title}
+      description={seo.description}
+      image={seo.image}
+      url={`/${slug}`}
+    >
+      <NavBar />
+      <BlogPostHeader5 client:load {...pageData} />
+      <Content30 client:load {...pageData} />
+      {/* <!-- <Testimonial1 client:load testimonials={testimonials} /> -->
+    <!-- <Cta19 /> --> */}
+      <Faq6 client:load />
+      <Blog39 client:load {...pageData} />
+      <Footer />
+    </Layout>
+  )
+}

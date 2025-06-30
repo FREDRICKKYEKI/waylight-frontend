@@ -1,0 +1,107 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { Contact21 } from "./components/Contact21";
+import { Cta1 } from "./components/Cta1";
+import Footer from "../components/Footer.astro";
+import NavBar from "../components/NavBar.astro";
+import { HeroSection } from "./components/HeroSection";
+import { FeatureSection } from "./components/FeatureSection";
+import { VideoEmbed } from "./components/VideoEmbed";
+import { Discover } from "./components/Discover";
+import { Testimonial1 } from "./components/Testimonial1";
+import { fetchSanityData, urlFor } from "../../lib/sanity";
+import { PricingSection } from "./components/PricingSection";
+import { MiniAboutSection } from "./components/MiniAboutSection";
+
+const homePage = await fetchSanityData(`
+*[_type == "page" && title == "Home"][0] {
+  ...,
+  "PageType": PageType[]{
+    ...,
+    homeSections[]{
+      ...,
+      _type == "testimonialSection" => {
+        ...,
+        testimonials[]->{
+          _id,
+          name,
+          image,
+          text,
+          company
+        },
+      },
+      _type == "contactUsSection" => {
+        ...,
+        contacts->{
+          email,
+          phone,
+          address
+        }
+      }
+    }
+  }
+}
+`);
+---
+
+<Layout
+  title="WayLight Car Shade Solutions | Home"
+  description={homePage.seo.description}
+  image={urlFor(homePage.seo.image).width(1200).height(630).url()}
+  url={`/${homePage.seo.slug.current}`}
+  keywords={homePage.seo?.keywords}
+>
+  <NavBar />
+  {
+    homePage.PageType[0].homeSections.map((section: any) => {
+      switch (section._type) {
+        case "heroSection":
+          const heroProps = {
+            ...section,
+            image: urlFor(section.image).url(),
+          };
+          return <HeroSection {...heroProps} client:load />;
+        case "miniAboutUsSection":
+          const miniAboutProps = {
+            ...section,
+            image: urlFor(section.image).url(),
+          };
+          return <MiniAboutSection {...miniAboutProps} client:load />;
+        case "pricingSection":
+          const pricingProps = {
+            ...section,
+            carShadeTypes: section.carShadeTypes.map((type: any) => ({
+              ...type,
+              image: urlFor(type.image).url(),
+            })),
+          };
+          return <PricingSection {...pricingProps} />;
+        case "featureSection":
+          const props = {
+            ...section,
+            features: section.features.map((feature: any) => ({
+              ...feature,
+              image: urlFor(feature.image).url(),
+            })),
+          };
+          return <FeatureSection {...props} client:load />;
+        case "testimonialSection":
+          const testimonialProps = {
+            ...section,
+            testimonials: section.testimonials.map((testimonial: any) => ({
+              ...testimonial,
+              image: urlFor(testimonial.image).url(),
+            })),
+          };
+          return <Testimonial1 {...testimonialProps} client:load />;
+        case "videoSection":
+          return <VideoEmbed {...section} client:load />;
+        case "contactUsSection":
+          return <Contact21 {...section} client:idle />;
+        default:
+          return null;
+      }
+    })
+  }
+  <Footer />;
+</Layout>
