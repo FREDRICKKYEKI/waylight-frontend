@@ -1,5 +1,4 @@
 import React from "react";
-import { Badge } from "@sanity/ui";
 import { useReadingTime } from "react-hook-reading-time";
 
 export const RenderReadingTime = (props: {
