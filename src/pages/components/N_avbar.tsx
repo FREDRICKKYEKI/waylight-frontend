@@ -1,6 +1,6 @@
 import { Button, useMediaQuery } from "@relume_io/relume-ui";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState, type FC, type PropsWithChildren } from "react";
+import { useEffect, useState, type FC, type PropsWithChildren } from "react";
 import { navMenuItems } from "../home/constans";
 import { CTAButton } from "../home/components/HeroSection";
 
@@ -43,6 +43,11 @@ const useRelume = () => {
 };
 
 export function Navbar(props: any) {
+  let currentPath = props.currentPath || (typeof window !== "undefined" ? window.location.pathname : "");
+  // remove the "/" at the end
+  if (currentPath.endsWith("/")) {
+    currentPath = currentPath.slice(0, -1);
+  }
 
   const useActive = useRelume();
   return (
@@ -86,7 +91,7 @@ export function Navbar(props: any) {
           lg:border-none lg:px-0 lg:pb-0 lg:[--opacity-closed:100%] lg:[--x-closed:0%]"
         >
           <div className="flex gap-4">
-            <RenderMenuItems type_="desktop" menuItems={props.menu.items} currentPath={props.currentPath} />
+            <RenderMenuItems type_="desktop" menuItems={props.menu.items} currentPath={currentPath} />
           </div>
           <a href="/" className="mt-10 mb-8 flex flex-shrink-0 lg:hidden">
             <img
@@ -97,7 +102,7 @@ export function Navbar(props: any) {
           </a>
           <div className="mt-6 lg:hidden">
             <Button title="Menu" size="sm" className="w-full">
-              <RenderMenuItems type_="mobile" menuItems={props.menu.items} currentPath={props.currentPath} />
+              <RenderMenuItems type_="mobile" menuItems={props.menu.items} currentPath={currentPath} />
             </Button>
           </div>
         </useActive.NavbarWrapper>

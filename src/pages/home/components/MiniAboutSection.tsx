@@ -14,6 +14,7 @@ export const MiniAboutSection = (props: any) => {
 
   return (
     <section id="section__miniabout"
+      className="px-[5%] py-4 md:py-16 text-dark-01 overflow-hidden"
       ref={sectionRef}>
       <div className="relative h-dvh overflow-hidden flex flex-col justify-center">
         <div className="container mx-auto">
